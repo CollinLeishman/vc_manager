@@ -9,7 +9,8 @@ import argparse
 # Get vCenter server session, pass vcenter name & password.
 vcip = "YOUR VCENTER IP"
 
-vcsession = vcconnect.get_vc_session(vcip, "YOUR VCENTER USERNAME", "YOUR VCENTER PASSWORD")
+vcsession = vcconnect.get_vc_session(
+    vcip, "YOUR VCENTER USERNAME", "YOUR VCENTER PASSWORD")
 
 
 # Get all the VMs.
@@ -68,10 +69,14 @@ def main():
     parser = argparse.ArgumentParser(description='Perform actions on vms')
     subparsers = parser.add_subparsers(dest="command")
 
-    machines_parser = subparsers.add_parser("machines", help="Machines sub command.")
-    machines_parser.add_argument("--show", action="store_true", help="Show machines.")
-    machines_parser.add_argument("--destroy", action="store_true", help="Destroy Machines.")
-    machines_parser.add_argument("--keyword", dest="keyword", help="Search vsphere for virtual machines with names containing a keyword.")
+    machines_parser = subparsers.add_parser(
+        "machines", help="Machines sub command.")
+    machines_parser.add_argument(
+        "--show", action="store_true", help="Show machines.")
+    machines_parser.add_argument(
+        "--destroy", action="store_true", help="Destroy Machines.")
+    machines_parser.add_argument(
+        "--keyword", dest="keyword", help="Search vsphere for virtual machines with names containing a keyword.")
 
     args = parser.parse_args()
 
@@ -79,13 +84,15 @@ def main():
         if args.show:
             if args.keyword:
                 total_user_vms = get_user_vms(args.keyword)
-                print(str("There are %i virtual machines matching keyword \"%s\"." % (total_user_vms, args.keyword)))
+                print(str("There are %i virtual machines matching keyword \"%s\"." % (
+                    total_user_vms, args.keyword)))
             else:
                 total_vms = get_total_vms()
                 print("%i virtual machines in total." % total_vms)
         elif args.destroy:
             get_user_vms(args.keyword)
-            ans = input("Are you sure you want to delete these VMs?\n(Only yes will delete them.)\n>")
+            ans = input(
+                "Are you sure you want to delete these VMs?\n(Only yes will delete them.)\n>")
             if ans == "yes":
                 delete_user_vms(args.keyword)
             else:

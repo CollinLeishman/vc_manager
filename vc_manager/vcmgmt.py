@@ -42,6 +42,18 @@ def get_user_vms(keyword):
     return len(open('my_vms.txt').readlines())
 
 
+# Reset VMs
+def reset_user_vms(keyword):
+    print("Doing a hard reset on your VMs.")
+    vm_response = json.loads(vms.text)
+    json_data = vm_response["value"]
+    for vm in json_data:
+        if keyword in vm.get("name"):
+            if vm.get("power_state") == "POWERED_ON":
+                vcconnect.poweroff_vm(vm.get("vm"), vcip)
+                vcconnect.poweron_vm(vm.get("vm"), vcip)
+
+
 def power_off_user_vms(keyword):
     print("Powering off your VMs.")
     vm_response = json.loads(vms.text)
@@ -74,6 +86,8 @@ def main():
     machines_parser.add_argument(
         "--show", action="store_true", help="Show machines.")
     machines_parser.add_argument(
+        "--reboot", action="store_true", help="Reboot machines.")
+    machines_parser.add_argument(
         "--destroy", action="store_true", help="Destroy Machines.")
     machines_parser.add_argument(
         "--keyword", dest="keyword", help="Search vsphere for virtual machines with names containing a keyword.")
@@ -89,7 +103,17 @@ def main():
             else:
                 total_vms = get_total_vms()
                 print("%i virtual machines in total." % total_vms)
+        elif args.reboot:
+            print("\n")
+            get_user_vms(args.keyword)
+            ans = input(
+                    "Are you sure you want to reboot these VMs?\n>")
+            if ans == "yes":
+                reset_user_vms(args.keyword)
+            else:
+                print("Not destroying any VMs. Exiting")
         elif args.destroy:
+            print("\n")
             get_user_vms(args.keyword)
             ans = input(
                 "Are you sure you want to delete these VMs?\n(Only yes will delete them.)\n>")
